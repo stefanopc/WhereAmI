@@ -22,7 +22,7 @@ If you want to record a clip you will have to sign in using your Google account 
 WhereAmI is a project built using these technologies:
   - Bootstrap v4
   - Leaflet API for the map and Leaflet Routing Machine for the directions
-  - OLC 
+  - OLC (OpenLocationCode)
   - MediaRecorder API
   - Google API
   - YouTube API
