@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700');
+
+html, body {
+  height: 100%;
+  width: 100%;
+  background-color: lightgrey;
+  font-family: 'Roboto', sans-serif;
+}
+
+.navbar {
+  padding: 8px;
+}
+
+.navbar-brand{
+  padding-left: 10px;
+}
+
+.navbar-nav li {
+  padding-right: 13px;
+}
+
+.nav-link {
+  font-size: 17px;
+}
+
+#map {
+  height: 80vh;
+
+}
+
+
