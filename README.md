@@ -12,6 +12,13 @@ For a better experience turn on your device location.
 If you want to record a clip you will have to sign in using your Google account and give audio/video permissions for recording.
 
 
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+
 WhereAmI is a project built using these technologies:
   - Bootstrap v4
   - Leaflet API for the map and Leaflet Routing Machine for the directions
