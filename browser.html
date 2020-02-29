@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+  <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="google-signin-scope" content="profile email">
+        <title>Where M I - L'audioguida turistica del XXI secolo</title>
+
+        <!-- Bootstrap e font-->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet"/>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="/browser.css">
+
+        <!-- Javascript  -->
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+        <!-- Leaflet -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin="">
+        <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+        <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.3.2/dist/esri-leaflet-geocoder.css" integrity="sha512-IM3Hs+feyi40yZhDH6kV8vQMg4Fh20s9OzInIIAc4nx7aMYMfo+IenRUekoYsHZqGkREUgx0VvlEsgm7nCDW9g==" crossorigin="">
+
+        <!-- OpenLocationCode -->
+        <script src="https://cdn.jsdelivr.net/openlocationcode/latest/openlocationcode.js"></script>
+        <script src="https://cdn.jsdelivr.net/openlocationcode/latest/openlocationcode.min.js"></script>
+
+        <!-- Google API -->
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <script src="https://apis.google.com/js/api.js"></script>
+        <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
+        <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+
+        <!-- Leaflet-routing -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+        <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+  </head>
+
+  <body>
+
+  <!-- Barra navigazione -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="mainNav">
+    <div class="container"><a class="navbar-brand" href="/">Where M I</a><button data-toggle="collapse" data-target="#navbarResponsive" class="navbar-toggler navbar-toggler-right" type="button" data-toogle="collapse"
+      aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-bars"></i></button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="nav navbar-nav mr-auto">
+          <li class="nav-item active"><a class="nav-link" href="/">Browser</a></li>
+          <li class="nav-item active"><a class="nav-link" href="editor.html">Editor</a></li>
+          <li class="nav-item active" data-toggle="modal" data-target="#modalInfo"><a class="nav-link" href="#">Info</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Modal info -->
+  <div class="modal fade" id="modalInfo" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Where am I - Browser</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>All'interno del browser potrai avere informazioni sui luoghi di interesse attorno a te ascoltando clip e
+            filtrandole in base a vari parametri. <br>
+            Se la geolocalizzazione non è attiva, attivala per mostrare il marker della posizione attuale sulla mappa, altrimenti
+            posiziona il marker nel luogo in cui ti trovi. </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- Mappa -->
+    <div id="map" style="width: 100%;">
+        <div id="video"></div>
+    </div>
+
+    <!-- Filtri-->
+    <section id="filterSection">
+            <div style="margin-right: 1%; margin-left: 1%; margin-top:5%;">
+              <div class="row m-5">
+                    <div class="col-md-2">
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend"><label class="input-group-text">Language</label>
+                            <select class="form-control custom-select custom-select-md" id="language" name="languageList">
+                                  <option value="ita" selected>Italiano</option>
+                                  <option value="eng">Inglese</option>
+                                  <option value="fra">Francese</option>
+                                  <option value="deu">Tedesco</option>
+                                  <option value="esp">Spagnolo</option>
+                            </select>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend"><label class="input-group-text">Audience<br></label>
+                            <select class="form-control custom-select custom-select-md" id="audience" name="audienceList">
+                              <option value="gen" selected>Pubblico generico</option>
+                              <option value="pre">Pre-scuola</option>
+                              <option value="elm">Scuola primaria</option>
+                              <option value="mid">Scuola media</option>
+                              <option value="scl">Specialisti nel settore</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="input-group mb-3">
+                        <div class="input-group-prepend"><label class="input-group-text">Purpose</label>
+                            <select class="form-control custom-select custom-select-md" id="purpose" name="purposeList">
+                              <option value="what" selected>What</option>
+                              <option value="how">How</option>
+                              <option value="why">Why</option>
+                            </select>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend"><label class="input-group-text">Content<br></label>
+                            <select class="form-control custom-select custom-select-md" id="content" name="contentList">
+                              <option value="none" selected>Nessuna</option>
+                              <option value="nat">Natura</option>
+                              <option value="mus">Musica</option>
+                              <option value="art">Arte</option>
+                              <option value="spo">Sport</option>
+                              <option value="his">Storia</option>
+                              <option value="flk">Folklore</option>
+                              <option value="cui">Cucina e drink</option>
+                            </select>
+                        </div>
+                      </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend"><label class="input-group-text">Detail level<br></label>
+                            <select class="form-control custom-select custom-select-md" id="detailLevel" name="detailList">
+                              <option value="1" selected>1</option>
+                              <option value="2">2</option>
+                              <option value="3">3</option>
+                              <option value="4">4</option>
+                            </select>
+                        </div>
+                    </div>
+                  </div>
+          </div>
+  </div>
+
+      <!-- Bottoni filtro e reset -->
+      <div class="row text-center">
+          <div class="col-xl-4 m-auto">
+            <button type="button" class="btn btn-primary" onclick="filtra()">Filtra</button>
+            <button type="button" class="btn btn-secondary" onclick="reset()">Reset</button>
+          </div>
+    </div>
+
+    <!-- Clip -->
+    <div style="margin-top: 3%; margin-bottom: 2%;">
+        <h2 class="text-center" style="margin-top: 2%;margin-bottom: 2%;">Clip</h2>
+    </div>
+
+    <div id="clips" class="row" style="margin-right: 2%; margin-left: 2%;"></div>
+
+    </section>
+
+    <script src="/mapBrowser.js"></script>
+    <script src="https://apis.google.com/js/client.js?onload=init" gapi_processed="true"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+    <script src="https://unpkg.com/esri-leaflet@2.3.2/dist/esri-leaflet.js" integrity="sha512-6LVib9wGnqVKIClCduEwsCub7iauLXpwrd5njR2J507m3A2a4HXJDLMiSZzjcksag3UluIfuW1KzuWVI5n/cuQ==" crossorigin=""></script>
+    <script src="https://unpkg.com/esri-leaflet-geocoder@2.3.2/dist/esri-leaflet-geocoder.js" integrity="sha512-8twnXcrOGP3WfMvjB0jS5pNigFuIWj4ALwWEgxhZ+mxvjF5/FBPVd5uAxqT8dd2kUmTVK9+yQJ4CmTmSg/sXAQ==" crossorigin=""></script>
+
+    <script>
+        //Protocollo HTTPS per Google API e localizzazione
+        if (window.location.protocol != "https:")
+          window.location.href = window.location.href.replace('http', 'https');
+
+        //Player Youtube per clip
+        var player;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('video', {
+                width: 1,
+                height: 1,
+                origin:'https://site181949.tw.cs.unibo.it'
+          });
+        }
+
+    </script>
+
+    </body>
+</html>
+
+
+

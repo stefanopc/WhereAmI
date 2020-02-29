@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-signin-client_id" content="612334816706-kgsnjbmuttrd4v3b7frvasq6kjunpkfs.apps.googleusercontent.com">
+  <title>Where M I - L'audioguida turistica del XXI secolo</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet"/>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/editor.css">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+  <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.3.2/dist/esri-leaflet-geocoder.css" integrity="sha512-IM3Hs+feyi40yZhDH6kV8vQMg4Fh20s9OzInIIAc4nx7aMYMfo+IenRUekoYsHZqGkREUgx0VvlEsgm7nCDW9g==" crossorigin="">
+
+  <!-- OpenLocationCode -->
+  <script src="https://cdn.jsdelivr.net/openlocationcode/latest/openlocationcode.js"></script>
+  <script src="https://cdn.jsdelivr.net/openlocationcode/latest/openlocationcode.min.js"></script>
+
+  <!-- Google API -->
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
+  <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- Barra navigazione -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="mainNav">
+    <div class="container"><a class="navbar-brand" href="/">Where M I</a><button data-toggle="collapse" data-target="#navbarResponsive" class="navbar-toggler navbar-toggler-right" type="button" data-toogle="collapse"
+      aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-bars"></i></button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="nav navbar-nav mr-auto">
+          <li class="nav-item active"><a class="nav-link" href="/">Browser</a></li>
+          <li class="nav-item active"><a class="nav-link" href="editor.html">Editor</a></li>
+          <li class="nav-item active" data-toggle="modal" data-target="#modalInfo"><a class="nav-link" href="#">Info</a></li>
+          <li class="nav-item active"><a class="nav-link"> <button onclick="handleAuthClick()" class="fa fa-google" type="button">Accedi</button></a></li>
+          <li class="nav-item active"><a class="nav-link" id="logOut" href="#" onClick="handleSignout()">Esci</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+<!-- Modal info -->
+  <div class="modal fade" id="modalInfo" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Where am I - Editor</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>All'interno dell'editor potrai registare e caricare nuove clip sui luoghi di interesse. <br>
+             Il <b>purpose</b> è lo scopo per il quale è stata registrata la clip, scelto tra: <br>
+              • what: l'identità della location, fino a 15 secondi <br>
+              • how: come accedere alla location, tra i 10 e i 30 secondi <br>
+              • why: perché è interessante parlare della location, con durata a seconda del livello <br>
+              Il <b>content</b> è la categoria a cui appartiene la clip, <b>audience</b> è la categoria di pubblico
+              e <b>detail</b> è un numero da 1 a 4 che identifica il livello di dettaglio del contenuto. <br>
+
+              Per poter creare nuove clip è necessario loggarsi col proprio account Google.
+         </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<section>
+
+   <!-- Mappa-->
+  <div id="map" style="width: 100%;"></div>
+
+  <div class="container">
+  <div id="msgLogin" style="margin-top: 3%">
+    <h5><b>Per caricare una clip, fai il login usando il tuo account Google e clicca sulla mappa sul luogo desiderato</b></h5>
+  </div>
+
+    <!-- Dati -->
+      <div id="data">
+
+       <div class="row" style="margin-top: 2%;">
+        <div class="col-sm-6">
+          <div class="form-group" style="margin-bottom: 3%;"><label for="Name">Nome</label>
+            <input id="name" class="form-control" type="text" style="width: 100%;" required>
+          </div>
+        </div>
+
+       <div class="col-xl-6 offset-xl-0">
+        <div class="form-group"><label for="description">Descrizione<br></label>
+          <textarea id="description" class="form-control" rows="3" style="width: 100%; height: 5%"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-2">
+        <div class="form-group"><label class="portfolio-hover" for="purpose">Purpose</label>
+
+          <select id="purpose" class="custom-select custom-select-lg">
+            <option value="what" selected>What</option>
+            <option value="how">How</option>
+            <option value="why">Why</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-sm-2">
+        <div class="form-group"><label for="language">Language</label>
+          <select id="language" class="custom-select custom-select-lg">
+            <option value="ita" selected>Italiano</option>
+            <option value="eng">Inglese</option>
+            <option value="fra">Francese</option>
+            <option value="deu">Tedesco</option>
+            <option value="esp">Spagnolo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-sm-4">
+        <div class="form-group"><label for="public">Audience</label>
+          <select id="audience" class="custom-select custom-select-lg">
+            <option value="gen" selected>Pubblico generico</option>
+            <option value="pre">Pre-scuola</option>
+            <option value="elm">Scuola primaria</option>
+            <option value="mid">Scuola media</option>
+            <option value="scl">Specialisti nel settore</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-sm-2">
+        <div class="form-group"><label for="category">Content</label>
+          <select id="content" class="custom-select custom-select-lg">
+            <option value="none" selected>Nessuna</option>
+            <option value="nat">Natura</option>
+            <option value="mus">Musica</option>
+            <option value="art">Arte</option>
+            <option value="spo">Sport</option>
+            <option value="his">Storia</option>
+            <option value="flk">Folklore</option>
+            <option value="cui">Cucina e drink</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-sm-2">
+        <div class="form-group"><label for="detailLevel">Detail level</label>
+        <select id="detailLevel" class="custom-select custom-select-lg">
+          <option value="1" selected>1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+        </div>
+      </div>
+  </div>
+
+ <!-- Registrazione video clip -->
+  <div id="videoRec" class="text-center" style="margin-top: 5%">
+    <video id="gum" autoplay muted playsinline></video>
+    <video id="recorded" autoplay playsinline></video>
+
+ <!-- Bottoni registrazione video -->
+    <div id="recButtons" class="text-center" style="margin-bottom: 2%">
+      <button class="btn btn-primary" id="recordVideo" >Start Rec</button>
+      <button class="btn btn-primary" id="playVideo" disabled>Play</button>
+      <button class="btn btn-primary" id="downloadVideo" disabled>Download</button>
+    </div>
+  </div>
+
+ <!-- Bottone upload registrazione -->
+   <div id="upRec"></div>
+
+</div> <!-- Div data -->
+</div> <!-- Div container -->
+</section>
+
+  <script>
+  //Protocollo HTTPS per Google API e localizzazione
+  if (window.location.protocol != "https:")
+    window.location.href = window.location.href.replace('http', 'https');
+  </script>
+
+  <!-- Custom Javascript -->
+  <script src="/auth.js"></script>
+  <script src="/mapEditor.js"></script>
+  <script src="/clipYT.js"></script>
+  <script src="https://unpkg.com/esri-leaflet@2.3.2/dist/esri-leaflet.js" integrity="sha512-6LVib9wGnqVKIClCduEwsCub7iauLXpwrd5njR2J507m3A2a4HXJDLMiSZzjcksag3UluIfuW1KzuWVI5n/cuQ==" crossorigin=""></script>
+  <script src="https://unpkg.com/esri-leaflet-geocoder@2.3.2/dist/esri-leaflet-geocoder.js" integrity="sha512-8twnXcrOGP3WfMvjB0jS5pNigFuIWj4ALwWEgxhZ+mxvjF5/FBPVd5uAxqT8dd2kUmTVK9+yQJ4CmTmSg/sXAQ==" crossorigin=""></script>
+</script>
+
+</body>
+</html>
+
